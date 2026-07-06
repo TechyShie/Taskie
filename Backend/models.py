@@ -25,7 +25,7 @@ class Task(Base):
     roadmap_name = Column(String, nullable=True)
 
 
-    schedule_date = Column(Date, nullable=False)
+    scheduled_date = Column(Date, nullable=False)
     original_date = Column(Date, nullable=False)
     rolled_from = Column(Date, nullable=True)
 

@@ -1,8 +1,11 @@
 from fastapi import FastAPI
 from sqlalchemy import text
 from database import engine
+from routers import tasks
 
 app = FastAPI()
+
+app.include_router(tasks.router)
 
 @app.get("/health")
 def health_check():
