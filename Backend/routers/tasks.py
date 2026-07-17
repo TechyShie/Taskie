@@ -7,6 +7,9 @@ from database import get_db
 from models import Task
 from schemas import TaskCreate, TaskUpdate, TaskOut
 
+from auth import get_current_user
+from models import User
+
 router = APIRouter(prefix="/tasks", tags=["tasks"])
 
 
@@ -68,3 +71,38 @@ def delete_task(task_id: int, db: Session = Depends(get_db)):
     db.delete(task)
     db.commit()
     return {"status": "ok", "message": f"Task {task_id} deleted"}
+
+
+@router.post("/", response_model=TaskOut)
+def create_task(task: TaskCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    new_task = Task(
+        user_id=current_user.id,
+        text=task.text,
+        category=task.category,
+        roadmap_name=task.roadmap_name,
+        scheduled_date=task.scheduled_date,
+        original_date=task.scheduled_date,
+        source=task.source,
+
+    )
+    db.add(new_task)
+    db.commit()
+    db.refresh(new_task)
+    return new_task
+
+
+@router.get("/", response_model=List[TaskOut])
+def list_tasks(
+    date: Optional[date_type] = None,
+    category: Optional[str] = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    query = db.query(Task).filter(Task.User_id == current_user.id)
+    if date:
+        query = query.filter(Task.scheduled_date == date)
+    if category:
+        query = query.filter(Task.category == category)
+    return query.all()
+
+    
