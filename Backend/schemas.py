@@ -49,3 +49,10 @@ class UserOut(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
+
+
+class RoadmapCreate(BaseModel):
+    roadmap_name: str
+    raw_text: str
+    start_date: date
+    tasks_per_day: Optional[int] = 1

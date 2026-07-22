@@ -3,11 +3,13 @@ from sqlalchemy import text
 from database import engine
 from routers import tasks
 from routers import tasks, auth
+from routers import tasks, auth, roadmaps
 
 app = FastAPI()
 
 app.include_router(tasks.router)
 app.include_router(auth.router)
+app.include_router(roadmaps.router)
 
 
 @app.get("/health")
