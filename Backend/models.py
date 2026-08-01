@@ -36,5 +36,19 @@ class Task(Base):
 
     owner = relationship("User", back_populates="tasks")
 
+
+    class UserStats(Base):
+        __tablename__ = "user_stats"
+
+        id = Column(Integer, primary_key=True, index=True)
+        user_id = Column(Integer, ForeignKey("users.id"), unique=True, nullable=False)
+        stars = Column(Integer, default=0)
+        current_streak = Column(Integer, default=0)
+        longest_streak = Column(Integer, default=0)
+        last_processed_date = Column(Date, nullable=True)
+
+        owner = relationship("User")
+
+
     
 
