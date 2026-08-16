@@ -1,37 +1,23 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { apiRequest } from "../api/client";
 
-function Login() {
+function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { login } = useAuth();
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
     e.preventDefault();
     setError("");
 
-    const API_URL = import.meta.env.VITE_API_URL;
-    const formBody = new URLSearchParams();
-    formBody.append("username", email);
-    formBody.append("password", password);
-
     try {
-      const response = await fetch(`${API_URL}/login`, {
+      await apiRequest("/register", {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: formBody,
+        body: JSON.stringify({ email, password }),
       });
-
-      if (!response.ok) {
-        throw new Error("Incorrect email or password");
-      }
-
-      const data = await response.json();
-      login(data.access_token);
-      navigate("/");
+      navigate("/login");
     } catch (err) {
       setError(err.message);
     }
@@ -39,7 +25,7 @@ function Login() {
 
   return (
     <div>
-      <h1>Login</h1>
+      <h1>Register</h1>
       <form onSubmit={handleSubmit}>
         <div>
           <label>Email</label>
@@ -60,13 +46,13 @@ function Login() {
           />
         </div>
         {error && <p style={{ color: "red" }}>{error}</p>}
-        <button type="submit">Log in</button>
+        <button type="submit">Create account</button>
       </form>
       <p>
-        No account? <Link to="/register">Register</Link>
+        Already have an account? <Link to="/login">Login</Link>
       </p>
     </div>
   );
 }
 
-export default Login;
+export default Register;
