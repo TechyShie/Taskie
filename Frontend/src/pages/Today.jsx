@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { getTasks, updateTask } from "../api/tasks";
+import { getTasks, updateTask, createTask } from "../api/tasks";
 import TaskItem from "../components/TaskItem";
+import QuickAddForm from "../components/QuickAddForm";
 
 function getTodayDateString() {
   const d = new Date();
@@ -44,12 +45,27 @@ function Today() {
     }
   }
 
+  async function handleAddTask(text) {
+    try {
+      const newTask = await createTask({
+        text,
+        category: "personal",
+        scheduled_date: getTodayDateString(),
+        source: "quick_add",
+      });
+      setTasks((prev) => [...prev, newTask]);
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
   if (loading) return <p>Loading today's tasks...</p>;
 
   return (
     <div>
       <h1>Today</h1>
       {error && <p style={{ color: "red" }}>{error}</p>}
+      <QuickAddForm onAdd={handleAddTask} />
       {tasks.length === 0 ? (
         <p>Nothing scheduled for today.</p>
       ) : (
